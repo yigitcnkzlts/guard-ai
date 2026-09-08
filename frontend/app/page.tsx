@@ -9,9 +9,8 @@ import {
   ShieldCheck,
   Siren,
 } from "lucide-react";
+import dynamic from "next/dynamic";
 
-import { DecisionChart } from "@/components/charts/DecisionChart";
-import { RiskChart } from "@/components/charts/RiskChart";
 import { EventTable } from "@/components/events/EventTable";
 import { EmptyState } from "@/components/ui/EmptyState";
 import { ErrorState } from "@/components/ui/ErrorState";
@@ -20,6 +19,9 @@ import { MetricSkeleton, TableSkeleton } from "@/components/ui/Skeleton";
 import { Panel } from "@/components/ui/Panel";
 import { guardApi } from "@/lib/api";
 import { useGuardQuery } from "@/lib/use-guard-query";
+
+const DecisionChart = dynamic(() => import("@/components/charts/DecisionChart").then((module) => module.DecisionChart), { loading: () => <TableSkeleton rows={4}/> });
+const RiskChart = dynamic(() => import("@/components/charts/RiskChart").then((module) => module.RiskChart), { loading: () => <TableSkeleton rows={4}/> });
 
 export default function OverviewPage() {
   const agentsQuery = useGuardQuery("agents", () => guardApi.agents());
@@ -53,7 +55,7 @@ export default function OverviewPage() {
         </p>
       </header>
 
-      {error ? <ErrorState message={error} /> : null}
+      {error ? <ErrorState message={error} onRetry={() => { void agentsQuery.reload(); void eventsQuery.reload(); }} /> : null}
 
       <section aria-label="Security metrics" className="grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
         {loading ? (

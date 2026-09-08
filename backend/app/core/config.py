@@ -17,6 +17,7 @@ class Settings(BaseSettings):
     MAX_REQUEST_BODY_BYTES: int = 262144
     ADMIN_API_KEY: str | None = None
     TENANT_ENFORCEMENT: bool = False
+    REDIS_URL: str | None = None
 
     @property
     def cors_origin_list(self) -> list[str]:

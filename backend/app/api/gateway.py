@@ -6,10 +6,9 @@ from app.database.session import get_db
 from app.schemas.gateway import GatewayExecuteRequest, GatewayExecuteResponse
 from app.services import gateway_service
 from app.core.config import settings
-from app.core.gateway_guard import IdempotencyStore, RateLimiter
+from app.core.gateway_guard import create_security_stores
 
-_rate_limiter = RateLimiter(settings.GATEWAY_RATE_LIMIT, 60)
-_idempotency = IdempotencyStore()
+_rate_limiter, _idempotency = create_security_stores(settings.REDIS_URL, settings.GATEWAY_RATE_LIMIT)
 
 router = APIRouter(prefix="/gateway", tags=["gateway"])
 

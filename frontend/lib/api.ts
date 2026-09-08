@@ -3,7 +3,7 @@ import type { Agent, HealthStatus, Policy, SecurityEvent } from "@/lib/types";
 import { DEMO_AGENTS, DEMO_HEALTH, DEMO_POLICIES, queryDemoEvents } from "@/lib/demo-data";
 
 export const GUARD_API_URL =
-  process.env.NEXT_PUBLIC_GUARD_API_URL ?? "http://localhost:8001";
+  process.env.NEXT_PUBLIC_GUARD_API_URL ?? "";
 export const DEMO_MODE_ENABLED = process.env.NEXT_PUBLIC_DEMO_MODE !== "false";
 
 export class GuardApiError extends Error {

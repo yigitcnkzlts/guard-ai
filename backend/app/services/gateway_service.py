@@ -18,6 +18,7 @@ from app.services.policy_engine import find_matching_policy
 NO_POLICY_REASON = "No matching security policy found"
 INACTIVE_AGENT_REASON = "Agent is inactive"
 ALLOW_REASON = "Request allowed by matched security policy"
+_http_client: httpx.AsyncClient | None = None
 
 
 @dataclass
@@ -38,18 +39,18 @@ def _assert_url_stays_on_upstream(url: str) -> None:
 
 
 async def forward_to_demoshop(method: str, path: str, body: Any | None) -> httpx.Response:
-    timeout = httpx.Timeout(settings.UPSTREAM_TIMEOUT_SECONDS)
-    async with httpx.AsyncClient(
-        base_url=_upstream_base(),
-        timeout=timeout,
-        follow_redirects=False,
-    ) as client:
-        kwargs: dict[str, Any] = {}
-        if body is not None:
-            kwargs["json"] = body
-        request = client.build_request(method, path, **kwargs)
-        _assert_url_stays_on_upstream(str(request.url))
-        return await client.send(request)
+    global _http_client
+    if _http_client is None:
+        _http_client=httpx.AsyncClient(base_url=_upstream_base(),timeout=httpx.Timeout(settings.UPSTREAM_TIMEOUT_SECONDS),follow_redirects=False,limits=httpx.Limits(max_connections=100,max_keepalive_connections=20))
+    kwargs: dict[str, Any] = {}
+    if body is not None: kwargs["json"] = body
+    request = _http_client.build_request(method, path, **kwargs)
+    _assert_url_stays_on_upstream(str(request.url))
+    return await _http_client.send(request)
+
+async def close_http_client()->None:
+    global _http_client
+    if _http_client is not None: await _http_client.aclose(); _http_client=None
 
 
 def _get_agent_by_slug(db: Session, slug: str) -> Agent:

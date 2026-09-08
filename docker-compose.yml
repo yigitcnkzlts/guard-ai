@@ -1,4 +1,16 @@
 services:
+  redis:
+    image: redis:7-alpine
+    container_name: guard-ai-redis
+    command: ["redis-server", "--appendonly", "yes"]
+    volumes:
+      - redis_data:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+
   postgres:
     image: postgres:16-alpine
     container_name: guard-ai-postgres
@@ -55,12 +67,15 @@ services:
       DEMOSHOP_BASE_URL: ${DEMOSHOP_BASE_URL}
       UPSTREAM_TIMEOUT_SECONDS: ${UPSTREAM_TIMEOUT_SECONDS:-5}
       CORS_ORIGINS: ${CORS_ORIGINS:-http://localhost:3000}
+      REDIS_URL: ${REDIS_URL:-redis://redis:6379/0}
     ports:
       - "8001:8000"
     depends_on:
       postgres:
         condition: service_healthy
       demo-api:
+        condition: service_healthy
+      redis:
         condition: service_healthy
     healthcheck:
       test:
@@ -91,3 +106,4 @@ services:
 
 volumes:
   postgres_data:
+  redis_data:

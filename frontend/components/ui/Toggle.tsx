@@ -1,0 +1,2 @@
+"use client";
+export function Toggle({checked,onChange,label}:{checked:boolean;onChange:(value:boolean)=>void;label:string}){return <button type="button" role="switch" aria-checked={checked} aria-label={label} onClick={()=>onChange(!checked)} className={`flex w-12 rounded-full p-1 ${checked?"justify-end bg-accent":"justify-start bg-zinc-700"}`}><span className="h-5 w-5 rounded-full bg-white shadow"/></button>}

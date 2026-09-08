@@ -18,14 +18,16 @@ export function AppShell({ children }: { children: React.ReactNode }) {
 
   return (
     <div className="flex min-h-screen bg-background">
+      <a href="#main-content" className="skip-link">Skip to content</a>
       <Sidebar open={open} onClose={() => setOpen(false)} />
       <div className="flex min-w-0 flex-1 flex-col">
-        <header className="flex items-center gap-3 border-b border-border bg-surface/80 px-4 py-3 backdrop-blur lg:hidden">
+        <header className="sticky top-0 z-20 flex items-center gap-3 border-b border-border bg-surface/90 px-4 py-3 backdrop-blur lg:hidden">
           <button type="button" aria-label="Open navigation" onClick={() => setOpen(true)} className="rounded-md p-1 text-zinc-300">
             <Menu className="h-5 w-5" />
           </button>
           <span className="text-sm font-semibold">GUARD AI</span>
-          {DEMO_MODE_ENABLED ? <DemoBadge /> : null}
+          <Link href="/audit-logs" aria-label="Notifications" className="ml-auto rounded-md p-1 text-muted"><Bell className="h-4 w-4"/></Link>
+          <LanguageSwitch />
         </header>
         <div className="hidden h-14 items-center justify-end gap-3 border-b border-border px-10 lg:flex">
           <ProductTools />
@@ -33,7 +35,8 @@ export function AppShell({ children }: { children: React.ReactNode }) {
           <LanguageSwitch />
           {DEMO_MODE_ENABLED ? <DemoBadge /> : null}
         </div>
-        <main className="flex-1 px-4 py-6 sm:px-7 lg:px-10 lg:py-8">{children}</main>
+        {DEMO_MODE_ENABLED ? <div className="border-b border-sky-400/15 bg-sky-400/[.05] px-4 py-2 text-center text-xs text-sky-200 lg:hidden" role="status">Demo workspace · No live systems are changed</div> : null}
+        <main id="main-content" tabIndex={-1} className="flex-1 px-4 py-6 sm:px-7 lg:px-10 lg:py-8">{children}</main>
       </div>
     </div>
   );
@@ -43,7 +46,7 @@ function DemoBadge() {
   return (
     <span className="ml-auto inline-flex items-center gap-2 rounded-full border border-sky-400/20 bg-sky-400/10 px-3 py-1 text-xs font-medium text-sky-200">
       <span className="h-1.5 w-1.5 rounded-full bg-sky-300" />
-      Demo workspace
+      Demo workspace · Safe data
     </span>
   );
 }
