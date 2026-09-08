@@ -1,0 +1,16 @@
+"use client";
+import { useState } from "react";
+import { Archive, Check, DatabaseBackup, FileLock2, Globe2, KeyRound, ListChecks, Network, RotateCw, ShieldCheck, Siren, Webhook } from "lucide-react";
+const controls=[
+  {icon:DatabaseBackup,title:"Encrypted backups",desc:"Daily encrypted configuration and evidence backups.",value:"Healthy"},
+  {icon:KeyRound,title:"Key rotation",desc:"Automatically rotate service credentials every 90 days.",value:"22 days"},
+  {icon:Archive,title:"Data retention",desc:"Keep security events according to company policy.",value:"365 days"},
+  {icon:Network,title:"IP allowlist",desc:"Restrict administrator access to trusted networks.",value:"4 ranges"},
+  {icon:FileLock2,title:"Session security",desc:"Enforce short sessions and device verification.",value:"8 hours"},
+  {icon:Webhook,title:"Signed webhooks",desc:"Verify every outbound GUARD notification.",value:"Enabled"},
+  {icon:ListChecks,title:"Audit integrity",desc:"Detect changes to exported audit evidence.",value:"Verified"},
+  {icon:Siren,title:"Incident playbook",desc:"Coordinate containment, owners and communications.",value:"Ready"},
+  {icon:Globe2,title:"Data residency",desc:"Pin customer data to an approved region.",value:"EU"},
+  {icon:RotateCw,title:"Disaster recovery",desc:"Test configuration recovery and service continuity.",value:"RTO 2h"},
+];
+export default function Page(){const[enabled,setEnabled]=useState<number[]>(controls.map((_,i)=>i));const[tested,setTested]=useState(false);return <div className="mx-auto max-w-[1150px] space-y-7"><header className="flex flex-wrap items-end justify-between gap-4"><div><p className="mb-2 flex items-center gap-2 text-sm font-medium text-accent"><ShieldCheck className="h-4 w-4"/>Security assurance</p><h1 className="text-3xl font-semibold tracking-tight">Trust Center</h1><p className="mt-2 max-w-2xl text-muted">Operational safeguards that keep GUARD reliable, recoverable and audit-ready.</p></div><button onClick={()=>setTested(true)} className="rounded-lg bg-accent px-4 py-2 text-sm font-semibold text-[#071412]">Run assurance check</button></header>{tested?<div className="flex items-center gap-2 rounded-xl border border-emerald-400/20 bg-emerald-400/10 p-4 text-sm text-emerald-200"><Check className="h-4 w-4"/>10 of 10 safeguards passed the demo assurance check.</div>:null}<section className="grid gap-4 md:grid-cols-2">{controls.map((c,i)=>{const I=c.icon;const on=enabled.includes(i);return <article key={c.title} className="flex gap-4 rounded-xl border border-border bg-surface p-5"><span className="grid h-10 w-10 shrink-0 place-items-center rounded-xl bg-accent/10 text-accent"><I className="h-5 w-5"/></span><div className="min-w-0 flex-1"><div className="flex items-start justify-between gap-3"><h2 className="font-semibold">{c.title}</h2><button onClick={()=>setEnabled(v=>on?v.filter(x=>x!==i):[...v,i])} role="switch" aria-checked={on} className={`flex w-10 shrink-0 rounded-full p-0.5 ${on?"justify-end bg-accent":"justify-start bg-zinc-700"}`}><span className="h-4 w-4 rounded-full bg-white"/></button></div><p className="mt-1 text-sm text-muted">{c.desc}</p><p className="mt-3 text-xs font-medium text-emerald-300">{c.value}</p></div></article>})}</section></div>}

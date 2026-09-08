@@ -1,0 +1,84 @@
+@import "tailwindcss";
+
+:root {
+  --background: #0e1319;
+  --foreground: #dce5ec;
+  --surface: #151b22;
+  --surface-raised: #192129;
+  --border: #29343f;
+  --muted: #97a6b4;
+  --accent: #72c8bb;
+}
+
+html[data-theme="light"] {
+  --background: #f3f6f8;
+  --foreground: #152129;
+  --surface: #ffffff;
+  --surface-raised: #ffffff;
+  --border: #d7e0e5;
+  --muted: #5e6d77;
+  --accent: #167f73;
+  color-scheme: light;
+}
+
+@media print {
+  aside, body > div header, button, nav { display: none !important; }
+  main { padding: 0 !important; }
+  body, section, article, div { background: white !important; color: #111 !important; box-shadow: none !important; }
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-surface: var(--surface);
+  --color-border: var(--border);
+  --color-muted: var(--muted);
+  --color-accent: var(--accent);
+  --font-sans: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  --font-mono: Consolas, "Liberation Mono", monospace;
+}
+
+html,
+body {
+  background: var(--background);
+  color: var(--foreground);
+}
+
+body {
+  line-height: 1.55;
+  text-rendering: optimizeLegibility;
+}
+
+::selection {
+  background: color-mix(in srgb, var(--accent) 28%, transparent);
+}
+
+* {
+  scrollbar-color: #243040 #0b0f14;
+}
+
+select,
+input {
+  outline: none;
+}
+
+select:focus,
+input:focus {
+  border-color: var(--accent);
+}
+
+:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 3px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    scroll-behavior: auto !important;
+    transition-duration: 0.01ms !important;
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+  }
+}
