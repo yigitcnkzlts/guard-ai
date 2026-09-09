@@ -9,12 +9,14 @@ from contextlib import asynccontextmanager
 from app.api import api_router
 from app.core.config import settings
 from app.core.exceptions import AppError
+from app.database.bootstrap import bootstrap_database
 from app.models import Agent, ApprovalRequest, AuditLog, Organization, Policy, SecurityEvent  # noqa: F401
 from app.services import metrics_service
 from app.services.gateway_service import close_http_client
 
 @asynccontextmanager
 async def lifespan(_app: FastAPI):
+    bootstrap_database()
     yield
     await close_http_client()
 

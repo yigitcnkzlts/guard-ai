@@ -19,6 +19,7 @@ class Settings(BaseSettings):
     ADMIN_API_KEY: str | None = None
     TENANT_ENFORCEMENT: bool = False
     REDIS_URL: str | None = None
+    AUTO_BOOTSTRAP_DATABASE: bool = False
 
     @property
     def cors_origin_list(self) -> list[str]:
@@ -26,6 +27,13 @@ class Settings(BaseSettings):
         if "*" in origins:
             raise ValueError("Wildcard CORS origins are not allowed")
         return origins
+
+    @property
+    def should_bootstrap_database(self) -> bool:
+        """Initialize explicitly enabled databases and Vercel's disposable demo DB."""
+        return self.AUTO_BOOTSTRAP_DATABASE or self.DATABASE_URL.startswith(
+            "sqlite:////tmp/"
+        )
 
 
 settings = Settings()
