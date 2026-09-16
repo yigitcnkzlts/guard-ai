@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 import { EventDrawer } from "@/components/events/EventDrawer";
 import { EventTable } from "@/components/events/EventTable";
@@ -24,6 +24,11 @@ export default function SecurityEventsPage() {
   const [appliedSearch, setAppliedSearch] = useState("");
   const [page, setPage] = useState(0);
   const [selectedId, setSelectedId] = useState<string | null>(null);
+
+  useEffect(() => {
+    const initialSearch = new URLSearchParams(window.location.search).get("search")?.slice(0, 200).trim();
+    if (initialSearch) queueMicrotask(() => { setSearch(initialSearch); setAppliedSearch(initialSearch); });
+  }, []);
 
   const agentsQuery = useGuardQuery("agents", () => guardApi.agents());
   const policiesQuery = useGuardQuery("policies", () => guardApi.policies());

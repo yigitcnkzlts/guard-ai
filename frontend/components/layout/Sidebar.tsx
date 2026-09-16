@@ -29,6 +29,7 @@ import {
   LayoutDashboard,
   Settings,
   Shield,
+  BrainCircuit,
   Waypoints,
   X,
 } from "lucide-react";
@@ -47,6 +48,7 @@ const NAV = [
   { href: "/integrations", label: "Integrations", tr: "Entegrasyonlar", icon: Plug },
   { href: "/discovery", label: "Agent Discovery", tr: "Ajan Keşfi", icon: Radar },
   { href: "/policy-copilot", label: "Policy Copilot", tr: "Politika Asistanı", icon: WandSparkles },
+  { href: "/ai-analyst", label: "AI Security Analyst", tr: "AI Güvenlik Analisti", icon: BrainCircuit },
   { href: "/attack-lab", label: "Attack Lab", tr: "Saldırı Laboratuvarı", icon: Bug },
   { href: "/compliance", label: "Compliance", tr: "Uyumluluk", icon: BadgeCheck },
   { href: "/value", label: "Business Value", tr: "İş Değeri", icon: ChartNoAxesCombined },
