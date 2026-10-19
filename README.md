@@ -110,6 +110,8 @@ docker compose exec guard-backend alembic upgrade head
 
 ## Test
 
+Dashboard ekranlarının amacı ve canlı API / demo ayrımı için [ekran durumları](docs/FEATURE_STATUS.md) belgesine bakın.
+
 DemoShop:
 
 ```bash

@@ -11,9 +11,26 @@ import { DEMO_MODE_ENABLED } from "@/lib/api";
 import { LanguageSwitch } from "@/components/layout/LocaleProvider";
 import { ProductTools } from "@/components/layout/ProductTools";
 
+const SCREEN_GUIDANCE: Record<string, { purpose: string; status: string }> = {
+  "/agents": { purpose: "Gateway tarafından korunan ajanları ve durumlarını gösterir.", status: "Canlı API verisi" },
+  "/policies": { purpose: "Policy Engine tarafından uygulanan kuralları gösterir.", status: "Canlı, salt okunur API verisi" },
+  "/security-events": { purpose: "Gateway kararlarını arar, filtreler, inceler ve dışa aktarır.", status: "Canlı API verisi" },
+  "/shadow-mode": { purpose: "Trafiği engellemeden önerilen kontrollerin etkisini gösterir.", status: "Etkileşimli demo" },
+  "/investigations": { purpose: "Bir kararın kullanıcı niyetinden policy sonucuna kadar izini açıklar.", status: "Örnek olay simülasyonu" },
+  "/controls": { purpose: "Ajan duraklatma ve acil kilitleme davranışını gösterir.", status: "Güvenli demo; canlı sistem değişmez" },
+  "/onboarding": { purpose: "İlk ajan entegrasyonu için örnek kurulum adımlarını gösterir.", status: "Yönlendirmeli demo" },
+  "/integrations": { purpose: "Ajan, onay, SIEM ve gözlemleme bağlantılarını listeler.", status: "Demo katalog; bağlantılar kalıcı değildir" },
+  "/discovery": { purpose: "Ajanların araçlar ve korunan sistemlerle ilişkisini görselleştirir.", status: "Örnek erişim haritası" },
+  "/policy-copilot": { purpose: "Doğal dildeki kuralı açıklanabilir policy taslağına dönüştürür.", status: "Deterministik demo; taslak yayınlanmaz" },
+  "/ai-analyst": { purpose: "Güvenlik olaylarını kanıt kayıtlarıyla özetler.", status: "API olayları üzerinde çalışan kural tabanlı analiz" },
+  "/attack-lab": { purpose: "Yaygın ajan saldırılarının nasıl engelleneceğini simüle eder.", status: "İzole simülasyon" },
+  "/compliance": { purpose: "Kanıt türlerini güvenlik ve mevzuat kontrolleriyle eşler.", status: "Örnek skorlar; sertifikasyon değildir" },
+};
+
 export function AppShell({ children }: { children: React.ReactNode }) {
   const [open, setOpen] = useState(false);
   const pathname = usePathname();
+  const screenGuidance = SCREEN_GUIDANCE[pathname];
   if (pathname === "/login" || pathname === "/product") return <>{children}</>;
 
   return (
@@ -36,6 +53,13 @@ export function AppShell({ children }: { children: React.ReactNode }) {
           {DEMO_MODE_ENABLED ? <DemoBadge /> : null}
         </div>
         {DEMO_MODE_ENABLED ? <div className="border-b border-sky-400/15 bg-sky-400/[.05] px-4 py-2 text-center text-xs text-sky-200 lg:hidden" role="status">Demo workspace · No live systems are changed</div> : null}
+        {screenGuidance ? (
+          <div className="border-b border-border bg-white/[.02] px-4 py-2 text-xs text-muted sm:px-7 lg:px-10" role="note">
+            <span className="font-medium text-zinc-200">{screenGuidance.status}</span>
+            <span aria-hidden="true"> · </span>
+            {screenGuidance.purpose}
+          </div>
+        ) : null}
         <main id="main-content" tabIndex={-1} className="flex-1 px-4 py-6 sm:px-7 lg:px-10 lg:py-8">{children}</main>
       </div>
     </div>

@@ -30,3 +30,18 @@ test("public metadata endpoints and bilingual controls are present", async () =>
   assert.match(robots, /sitemap\.xml/);
   assert.match(sitemap, /\/product/);
 });
+
+test("listed product screens disclose their purpose and live or demo status", async () => {
+  const shell = await read("frontend/components/layout/AppShell.tsx");
+  for (const route of [
+    "/agents", "/policies", "/security-events", "/shadow-mode",
+    "/investigations", "/controls", "/onboarding", "/integrations",
+    "/discovery", "/policy-copilot", "/ai-analyst", "/attack-lab",
+    "/compliance",
+  ]) {
+    assert.ok(shell.includes(`"${route}"`), `missing guidance for ${route}`);
+  }
+  assert.match(shell, /Canlı API verisi/);
+  assert.match(shell, /Etkileşimli demo/);
+  assert.match(shell, /sertifikasyon değildir/);
+});
