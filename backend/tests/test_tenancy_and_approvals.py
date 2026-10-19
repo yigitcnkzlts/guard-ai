@@ -74,6 +74,20 @@ def test_approval_decision_rolls_back_when_audit_log_fails(client, db_session, m
     assert db_session.query(AuditLog).count()==original_audit_count
 
 
+def test_approval_creation_rolls_back_when_audit_log_fails(client, db_session, monkeypatch):
+    original_audit_count=db_session.query(AuditLog).count()
+
+    def fail_audit(*args, **kwargs):
+        raise RuntimeError("audit storage unavailable")
+
+    monkeypatch.setattr("app.services.gateway_service.audit_service.append_audit_log", fail_audit)
+    with pytest.raises(RuntimeError, match="audit storage unavailable"):
+        client.post("/api/gateway/execute",json={"agent":"customer-support-agent","method":"POST","path":"/api/orders/123/refund","body":None})
+
+    assert db_session.query(ApprovalRequest).count()==0
+    assert db_session.query(AuditLog).count()==original_audit_count
+
+
 def test_idempotency_header_replays_gateway_response(client, mock_upstream):
     payload={"agent":"customer-support-agent","method":"GET","path":"/api/orders/123","body":None}
     first=client.post("/api/gateway/execute",headers={"Idempotency-Key":"order-123"},json=payload)

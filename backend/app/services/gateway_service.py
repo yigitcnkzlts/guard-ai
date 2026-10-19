@@ -184,8 +184,13 @@ async def execute(db: Session, payload: GatewayExecuteRequest) -> GatewayOutcome
         )
 
     if policy.decision == Decision.REQUIRE_APPROVAL:
-        approval = approval_service.create_for_event(db, recorded_event)
-        audit_service.append_audit_log(db, actor=agent.slug, action="approval.requested", resource_type="approval_request", resource_id=str(approval.id), organization_id=agent.organization_id, details={"path": path, "risk": policy.risk_level.value})
+        try:
+            approval = approval_service.create_for_event(db, recorded_event, commit=False)
+            audit_service.append_audit_log(db, actor=agent.slug, action="approval.requested", resource_type="approval_request", resource_id=str(approval.id), organization_id=agent.organization_id, details={"path": path, "risk": policy.risk_level.value}, commit=False)
+            db.commit()
+        except Exception:
+            db.rollback()
+            raise
         return GatewayOutcome(
             status_code=202,
             payload=_build_response(

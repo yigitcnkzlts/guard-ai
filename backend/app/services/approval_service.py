@@ -4,9 +4,15 @@ from app.core.exceptions import ConflictError
 from app.models.governance import ApprovalRequest, ApprovalStatus
 from app.models.security_event import SecurityEvent
 
-def create_for_event(db: Session, event: SecurityEvent, *, required_approvals: int = 1, ttl_minutes: int = 30) -> ApprovalRequest:
+def create_for_event(db: Session, event: SecurityEvent, *, required_approvals: int = 1, ttl_minutes: int = 30, commit: bool = True) -> ApprovalRequest:
     approval = ApprovalRequest(organization_id=event.organization_id, security_event_id=event.id, status=ApprovalStatus.PENDING, required_approvals=max(1, required_approvals), approvals_received=0, expires_at=datetime.now(timezone.utc)+timedelta(minutes=ttl_minutes))
-    db.add(approval); db.commit(); db.refresh(approval); return approval
+    db.add(approval)
+    if commit:
+        db.commit()
+        db.refresh(approval)
+    else:
+        db.flush()
+    return approval
 
 def decide(db: Session, approval: ApprovalRequest, *, actor: str, approve: bool, reason: str | None = None, commit: bool = True) -> ApprovalRequest:
     now = datetime.now(timezone.utc)
