@@ -8,7 +8,7 @@ def create_for_event(db: Session, event: SecurityEvent, *, required_approvals: i
     approval = ApprovalRequest(organization_id=event.organization_id, security_event_id=event.id, status=ApprovalStatus.PENDING, required_approvals=max(1, required_approvals), approvals_received=0, expires_at=datetime.now(timezone.utc)+timedelta(minutes=ttl_minutes))
     db.add(approval); db.commit(); db.refresh(approval); return approval
 
-def decide(db: Session, approval: ApprovalRequest, *, actor: str, approve: bool, reason: str | None = None) -> ApprovalRequest:
+def decide(db: Session, approval: ApprovalRequest, *, actor: str, approve: bool, reason: str | None = None, commit: bool = True) -> ApprovalRequest:
     now = datetime.now(timezone.utc)
     expires_at = approval.expires_at
     if expires_at is not None and expires_at.tzinfo is None:
@@ -24,4 +24,11 @@ def decide(db: Session, approval: ApprovalRequest, *, actor: str, approve: bool,
         approval.approvals_received += 1
         if approval.approvals_received >= approval.required_approvals: approval.status = ApprovalStatus.APPROVED
     else: approval.status = ApprovalStatus.REJECTED
-    approval.decided_by=actor; approval.decision_reason=reason; db.commit(); db.refresh(approval); return approval
+    approval.decided_by = actor
+    approval.decision_reason = reason
+    if commit:
+        db.commit()
+        db.refresh(approval)
+    else:
+        db.flush()
+    return approval

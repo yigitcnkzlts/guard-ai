@@ -5,12 +5,17 @@ from sqlalchemy.orm import Session
 from app.models.governance import AuditLog
 
 
-def append_audit_log(db: Session, *, actor: str, action: str, resource_type: str, resource_id: str | None = None, organization_id: UUID | None = None, details: dict | None = None) -> AuditLog:
+def append_audit_log(db: Session, *, actor: str, action: str, resource_type: str, resource_id: str | None = None, organization_id: UUID | None = None, details: dict | None = None, commit: bool = True) -> AuditLog:
     previous = db.query(AuditLog).order_by(AuditLog.created_at.desc(), AuditLog.id.desc()).first()
     previous_hash = previous.entry_hash if previous else None
     canonical = json.dumps({"actor": actor, "action": action, "resource_type": resource_type, "resource_id": resource_id, "organization_id": str(organization_id) if organization_id else None, "details": details or {}, "previous_hash": previous_hash}, sort_keys=True, separators=(",", ":"))
     entry = AuditLog(organization_id=organization_id, actor=actor, action=action, resource_type=resource_type, resource_id=resource_id, details=details, previous_hash=previous_hash, entry_hash=hashlib.sha256(canonical.encode()).hexdigest())
-    db.add(entry); db.commit(); db.refresh(entry)
+    db.add(entry)
+    if commit:
+        db.commit()
+        db.refresh(entry)
+    else:
+        db.flush()
     return entry
 
 

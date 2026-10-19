@@ -23,6 +23,12 @@ def decide_approval(approval_id:UUID,payload:ApprovalDecision,db:Session=Depends
     if context.organization_id is not None: query=query.filter(ApprovalRequest.organization_id==context.organization_id)
     approval=query.first()
     if approval is None: raise NotFoundError(f"Approval {approval_id} not found")
-    result=approval_service.decide(db,approval,actor=context.actor,approve=payload.approve,reason=payload.reason)
-    audit_service.append_audit_log(db,actor=context.actor,action="approval.approved" if payload.approve else "approval.rejected",resource_type="approval_request",resource_id=str(result.id),organization_id=context.organization_id,details={"reason":payload.reason})
+    try:
+        result=approval_service.decide(db,approval,actor=context.actor,approve=payload.approve,reason=payload.reason,commit=False)
+        audit_service.append_audit_log(db,actor=context.actor,action="approval.approved" if payload.approve else "approval.rejected",resource_type="approval_request",resource_id=str(result.id),organization_id=context.organization_id,details={"reason":payload.reason},commit=False)
+        db.commit()
+        db.refresh(result)
+    except Exception:
+        db.rollback()
+        raise
     return result

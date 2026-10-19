@@ -1,7 +1,9 @@
 from app.models.agent import Agent, AgentEnvironment
 from datetime import datetime, timedelta, timezone
 
-from app.models.governance import ApprovalRequest, ApprovalStatus, Organization
+import pytest
+
+from app.models.governance import ApprovalRequest, ApprovalStatus, AuditLog, Organization
 
 
 def test_agent_list_is_scoped_by_organization(client, db_session):
@@ -51,6 +53,25 @@ def test_expired_approval_cannot_be_approved(client, db_session):
     assert response.json()["code"]=="RESOURCE_CONFLICT"
     db_session.refresh(approval)
     assert approval.status==ApprovalStatus.EXPIRED
+
+
+def test_approval_decision_rolls_back_when_audit_log_fails(client, db_session, monkeypatch):
+    created=client.post("/api/gateway/execute",json={"agent":"customer-support-agent","method":"POST","path":"/api/orders/123/refund","body":None})
+    assert created.status_code==202
+    approval=db_session.query(ApprovalRequest).one()
+    original_audit_count=db_session.query(AuditLog).count()
+
+    def fail_audit(*args, **kwargs):
+        raise RuntimeError("audit storage unavailable")
+
+    monkeypatch.setattr("app.api.approvals.audit_service.append_audit_log", fail_audit)
+    with pytest.raises(RuntimeError, match="audit storage unavailable"):
+        client.post(f"/api/approvals/{approval.id}/decision",headers={"X-Role":"reviewer"},json={"approve":True})
+
+    db_session.refresh(approval)
+    assert approval.status==ApprovalStatus.PENDING
+    assert approval.approvals_received==0
+    assert db_session.query(AuditLog).count()==original_audit_count
 
 
 def test_idempotency_header_replays_gateway_response(client, mock_upstream):
