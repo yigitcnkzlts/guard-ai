@@ -17,6 +17,11 @@ class BadRequestError(AppError):
         super().__init__(message, 400, "BAD_REQUEST")
 
 
+class ConflictError(AppError):
+    def __init__(self, message: str = "Resource state conflict") -> None:
+        super().__init__(message, 409, "RESOURCE_CONFLICT")
+
+
 class UpstreamError(AppError):
     def __init__(self, message: str, status_code: int = 502) -> None:
         super().__init__(message, status_code, "UPSTREAM_ERROR")

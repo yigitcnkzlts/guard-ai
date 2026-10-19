@@ -19,7 +19,7 @@ def list_approvals(status: ApprovalStatus | None=None, db:Session=Depends(get_db
 
 @router.post("/{approval_id}/decision",response_model=ApprovalRead)
 def decide_approval(approval_id:UUID,payload:ApprovalDecision,db:Session=Depends(get_db),context:RequestContext=Depends(require_roles(Role.OWNER,Role.SECURITY_ADMIN,Role.REVIEWER))):
-    query=db.query(ApprovalRequest).filter(ApprovalRequest.id==approval_id)
+    query=db.query(ApprovalRequest).filter(ApprovalRequest.id==approval_id).with_for_update()
     if context.organization_id is not None: query=query.filter(ApprovalRequest.organization_id==context.organization_id)
     approval=query.first()
     if approval is None: raise NotFoundError(f"Approval {approval_id} not found")
