@@ -1,5 +1,5 @@
 import type { SecurityEventQuery } from "@/lib/types";
-import type { Agent, HealthStatus, Policy, PolicyWrite, SecurityEvent } from "@/lib/types";
+import type { Agent, Approval, ApprovalStatus, HealthStatus, Policy, PolicyWrite, SecurityEvent } from "@/lib/types";
 import { DEMO_AGENTS, DEMO_HEALTH, DEMO_POLICIES, queryDemoEvents } from "@/lib/demo-data";
 
 export const GUARD_API_URL =
@@ -57,6 +57,16 @@ export const guardApi = {
     () => request<Agent>(`/api/agents/${id}`),
     DEMO_AGENTS.find((agent) => agent.id === id) ?? DEMO_AGENTS[0],
   ),
+  updateAgentStatus: (id: string, active: boolean) => request<Agent>(`/api/agents/${id}/status`, {
+    method: "PATCH",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ active }),
+  }),
+  setAllAgentStatus: (active: boolean) => request<Agent[]>("/api/agents/actions/set-all-status", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ active }),
+  }),
   policies: () => withDemoFallback(() => request<Policy[]>("/api/policies"), DEMO_POLICIES),
   policy: (id: string) => withDemoFallback(
     () => request<Policy>(`/api/policies/${id}`),
@@ -77,6 +87,12 @@ export const guardApi = {
       () => request<SecurityEvent[]>(`/api/security-events${buildQuery(params)}`),
       queryDemoEvents(params),
     ),
+  approvals: (status?: ApprovalStatus) => request<Approval[]>(`/api/approvals${status ? `?status=${status}` : ""}`),
+  decideApproval: (id: string, approve: boolean, reason?: string) => request<Approval>(`/api/approvals/${id}/decision`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ approve, reason }),
+  }),
 };
 
 async function withDemoFallback<T>(loader: () => Promise<T>, fallback: T): Promise<T> {

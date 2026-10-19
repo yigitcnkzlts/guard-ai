@@ -19,6 +19,18 @@ def get_agent(db: Session, agent_id: UUID, organization_id: UUID | None = None) 
     return agent
 
 
+def set_agent_active(agent: Agent, active: bool) -> Agent:
+    agent.active = active
+    return agent
+
+
+def set_all_agents_active(db: Session, organization_id: UUID | None, active: bool) -> list[Agent]:
+    agents = repository.list_agents(db, organization_id)
+    for agent in agents:
+        agent.active = active
+    return agents
+
+
 def list_policies(db: Session, organization_id: UUID | None = None) -> list[Policy]:
     return repository.list_policies(db, organization_id)
 

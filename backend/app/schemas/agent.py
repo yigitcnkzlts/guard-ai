@@ -17,3 +17,7 @@ class AgentRead(BaseModel):
     active: bool
     created_at: datetime
     updated_at: datetime
+
+
+class AgentStatusUpdate(BaseModel):
+    active: bool

@@ -7,9 +7,10 @@ Bu tablo, canlı API davranışını etkileşimli demo davranışından ayırır
 | AI Ajanları | Gateway tarafından korunan ajanları ve ayrıntılarını gösterir. | Canlı API verisi; demo modu açıksa API kesintisinde örnek veriye düşebilir. |
 | Politikalar | Deterministik Policy Engine kurallarını oluşturur ve yönetir. | Canlı API listesi, oluşturma ve düzenleme akışı. |
 | Güvenlik Olayları | Gateway kararlarını arar, filtreler, inceler ve JSON olarak dışa aktarır. | Canlı API verisi; demo fallback desteklenir. |
+| Onaylar | Yüksek riskli işlemleri yetkili inceleyicinin onay veya reddine sunar. | Canlı backend kuyruğu; kararlar kalıcı ve audit kayıtlıdır. |
 | Gölge Modu | Trafiği engellemeden olası policy etkilerini gösterir. | Tarayıcı oturumuyla sınırlı etkileşimli demo. |
 | İncelemeler | Bir kararın kullanıcı niyetinden enforcement sonucuna kadar izini gösterir. | Örnek olay ve yerel eşik simülasyonu. |
-| Acil Kontroller | Enforcement modu, ajan izolasyonu ve lockdown davranışını gösterir. | Güvenli demo; canlı ajan veya backend durumu değişmez. |
+| Acil Kontroller | Ajanları duraklatır, devam ettirir ve organizasyon genelinde lockdown uygular. | Canlı backend durumu; gateway pasif ajanların işlemlerini engeller. |
 | Hızlı Kurulum | İlk ajan entegrasyonunun örnek adımlarını gösterir. | Yönlendirmeli demo; gerçek workspace veya bağlantı oluşturmaz. |
 | Entegrasyonlar | Ajan, onay kanalı, SIEM ve gözlemleme bağlantılarını listeler. | Aranabilir demo katalog; bağlantı durumu kalıcı değildir. |
 | Ajan Keşfi | Ajanların araçlar ve korunan sistemlerle ilişkisini görselleştirir. | Örnek erişim haritası; canlı keşif etkin değildir. |

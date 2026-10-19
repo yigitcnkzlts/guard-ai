@@ -65,3 +65,18 @@ export interface SecurityEventQuery {
   offset?: number;
   search?: string;
 }
+
+export type ApprovalStatus = "PENDING" | "APPROVED" | "REJECTED" | "EXPIRED";
+
+export interface Approval {
+  id: string;
+  organization_id: string | null;
+  security_event_id: string;
+  status: ApprovalStatus;
+  required_approvals: number;
+  approvals_received: number;
+  decided_by: string | null;
+  decision_reason: string | null;
+  expires_at: string | null;
+  created_at: string;
+}

@@ -17,7 +17,7 @@ const SCREEN_GUIDANCE: Record<string, { purpose: string; status: string }> = {
   "/security-events": { purpose: "Gateway kararlarını arar, filtreler, inceler ve dışa aktarır.", status: "Canlı API verisi" },
   "/shadow-mode": { purpose: "Trafiği engellemeden önerilen kontrollerin etkisini gösterir.", status: "Etkileşimli demo" },
   "/investigations": { purpose: "Bir kararın kullanıcı niyetinden policy sonucuna kadar izini açıklar.", status: "Örnek olay simülasyonu" },
-  "/controls": { purpose: "Ajan duraklatma ve acil kilitleme davranışını gösterir.", status: "Güvenli demo; canlı sistem değişmez" },
+  "/controls": { purpose: "Ajanları kalıcı olarak duraklatır, devam ettirir ve gateway trafiğini kilitler.", status: "Canlı backend kontrolü" },
   "/onboarding": { purpose: "İlk ajan entegrasyonu için örnek kurulum adımlarını gösterir.", status: "Yönlendirmeli demo" },
   "/integrations": { purpose: "Ajan, onay, SIEM ve gözlemleme bağlantılarını listeler.", status: "Demo katalog; bağlantılar kalıcı değildir" },
   "/discovery": { purpose: "Ajanların araçlar ve korunan sistemlerle ilişkisini görselleştirir.", status: "Örnek erişim haritası" },
@@ -25,6 +25,7 @@ const SCREEN_GUIDANCE: Record<string, { purpose: string; status: string }> = {
   "/ai-analyst": { purpose: "Güvenlik olaylarını kanıt kayıtlarıyla özetler.", status: "API olayları üzerinde çalışan kural tabanlı analiz" },
   "/attack-lab": { purpose: "Yaygın ajan saldırılarının nasıl engelleneceğini simüle eder.", status: "İzole simülasyon" },
   "/compliance": { purpose: "Kanıt türlerini güvenlik ve mevzuat kontrolleriyle eşler.", status: "Örnek skorlar; sertifikasyon değildir" },
+  "/approvals": { purpose: "Bekleyen yüksek riskli işlemleri yetkili inceleyiciye yönlendirir.", status: "Canlı backend onay kuyruğu" },
 };
 
 export function AppShell({ children }: { children: React.ReactNode }) {
