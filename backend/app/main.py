@@ -2,6 +2,7 @@ from fastapi import FastAPI, Request, HTTPException
 from fastapi.exceptions import RequestValidationError
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
+from fastapi.encoders import jsonable_encoder
 import time
 from uuid import uuid4
 from contextlib import asynccontextmanager
@@ -31,7 +32,7 @@ app.add_middleware(
     CORSMiddleware,
     allow_origins=settings.cors_origin_list,
     allow_credentials=False,
-    allow_methods=["GET", "POST", "OPTIONS"],
+    allow_methods=["GET", "POST", "PATCH", "OPTIONS"],
     allow_headers=["Content-Type", "Accept"],
 )
 
@@ -63,4 +64,5 @@ async def handle_http_error(request: Request, exc: HTTPException) -> JSONRespons
 
 @app.exception_handler(RequestValidationError)
 async def handle_validation_error(request: Request, exc: RequestValidationError) -> JSONResponse:
-    return JSONResponse(status_code=422, content={"code": "VALIDATION_ERROR", "message": "Request validation failed", "request_id": getattr(request.state, "request_id", None), "details": {"errors": exc.errors()}, "detail": exc.errors()})
+    errors = jsonable_encoder(exc.errors())
+    return JSONResponse(status_code=422, content={"code": "VALIDATION_ERROR", "message": "Request validation failed", "request_id": getattr(request.state, "request_id", None), "details": {"errors": errors}, "detail": errors})

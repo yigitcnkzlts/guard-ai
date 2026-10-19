@@ -1,8 +1,26 @@
 "use client";
-import { useParams } from "next/navigation";
-import { useState } from "react";
+
 import Link from "next/link";
-import { Check, ChevronLeft } from "lucide-react";
-import { DEMO_POLICIES } from "@/lib/demo-data";
-export default function Page(){const{id}=useParams<{id:string}>();const p=DEMO_POLICIES.find(x=>x.id===id)??DEMO_POLICIES[0];const[saved,setSaved]=useState(false);return <div className="mx-auto max-w-3xl space-y-7"><header><Link href="/policies" className="mb-5 flex items-center gap-1 text-sm text-muted"><ChevronLeft className="h-4 w-4"/>Back to policies</Link><h1 className="text-3xl font-semibold tracking-tight">Edit policy</h1><p className="mt-2 text-muted">Update enforcement behavior for {p.name}.</p></header>{saved?<div className="flex items-center gap-2 rounded-xl border border-emerald-400/20 bg-emerald-400/10 p-4 text-emerald-200"><Check className="h-4 w-4"/>Policy changes saved.</div>:null}<form onSubmit={e=>{e.preventDefault();setSaved(true)}} className="space-y-5 rounded-xl border border-border bg-surface p-6"><Field l="Policy name" v={p.name}/><div className="grid gap-5 sm:grid-cols-2"><Field l="HTTP method" v={p.method}/><Field l="Path pattern" v={p.path_pattern}/><Field l="Decision" v={p.decision}/><Field l="Risk level" v={p.risk_level}/></div><label className="block text-sm text-muted">Description<textarea defaultValue={p.description} className="mt-2 min-h-28 w-full rounded-lg border border-border bg-background p-3 text-foreground"/></label><div className="flex justify-end gap-3"><Link href="/policies" className="rounded-lg border border-border px-4 py-2 text-sm">Cancel</Link><button className="rounded-lg bg-accent px-4 py-2 text-sm font-semibold text-[#071412]">Save changes</button></div></form></div>}
-function Field({l,v}:{l:string;v:string}){return <label className="text-sm text-muted">{l}<input defaultValue={v} className="mt-2 w-full rounded-lg border border-border bg-background px-3 py-2.5 text-foreground"/></label>}
+import { useParams, useRouter } from "next/navigation";
+import { ChevronLeft } from "lucide-react";
+
+import { PolicyForm } from "@/components/policies/PolicyForm";
+import { ErrorState } from "@/components/ui/ErrorState";
+import { TableSkeleton } from "@/components/ui/Skeleton";
+import { guardApi } from "@/lib/api";
+import type { PolicyWrite } from "@/lib/types";
+import { useGuardQuery } from "@/lib/use-guard-query";
+
+export default function Page() {
+  const { id } = useParams<{ id: string }>();
+  const router = useRouter();
+  const agentsQuery = useGuardQuery("agents", () => guardApi.agents());
+  const policyQuery = useGuardQuery(`policy:${id}`, () => guardApi.policy(id));
+  const error = agentsQuery.error ?? policyQuery.error;
+  const loading = agentsQuery.loading || policyQuery.loading;
+  const policy = policyQuery.data;
+  const agents = agentsQuery.data ?? [];
+  const initial: PolicyWrite | null = policy ? { name: policy.name, agent_id: policy.agent_id, method: policy.method, path_pattern: policy.path_pattern, decision: policy.decision, risk_level: policy.risk_level, description: policy.description, active: policy.active, priority: 100 } : null;
+
+  return <div className="mx-auto max-w-3xl space-y-7"><header><Link href="/policies" className="mb-5 flex items-center gap-1 text-sm text-muted"><ChevronLeft className="h-4 w-4" />Back to policies</Link><h1 className="text-3xl font-semibold tracking-tight">Edit policy</h1><p className="mt-2 text-muted">Update live Policy Engine behavior.</p></header>{error ? <ErrorState message={error} /> : loading || !initial ? <TableSkeleton rows={4} /> : <PolicyForm key={policy?.id} agents={agents} initial={initial} submitLabel="Save changes" onSubmit={async values => { await guardApi.updatePolicy(id, values); router.push("/policies"); router.refresh(); }} />}</div>;
+}

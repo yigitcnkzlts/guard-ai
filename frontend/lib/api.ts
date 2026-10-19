@@ -1,5 +1,5 @@
 import type { SecurityEventQuery } from "@/lib/types";
-import type { Agent, HealthStatus, Policy, SecurityEvent } from "@/lib/types";
+import type { Agent, HealthStatus, Policy, PolicyWrite, SecurityEvent } from "@/lib/types";
 import { DEMO_AGENTS, DEMO_HEALTH, DEMO_POLICIES, queryDemoEvents } from "@/lib/demo-data";
 
 export const GUARD_API_URL =
@@ -28,12 +28,12 @@ function buildQuery(params: SecurityEventQuery): string {
   return encoded ? `?${encoded}` : "";
 }
 
-async function request<T>(path: string): Promise<T> {
+async function request<T>(path: string, init: RequestInit = {}): Promise<T> {
   let response: Response;
   try {
     response = await fetch(`${GUARD_API_URL}${path}`, {
-      method: "GET",
-      headers: { Accept: "application/json" },
+      ...init,
+      headers: { Accept: "application/json", ...init.headers },
       cache: "no-store",
     });
   } catch {
@@ -62,6 +62,16 @@ export const guardApi = {
     () => request<Policy>(`/api/policies/${id}`),
     DEMO_POLICIES.find((policy) => policy.id === id) ?? DEMO_POLICIES[0],
   ),
+  createPolicy: (payload: PolicyWrite) => request<Policy>("/api/policies", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(payload),
+  }),
+  updatePolicy: (id: string, payload: Partial<PolicyWrite>) => request<Policy>(`/api/policies/${id}`, {
+    method: "PATCH",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(payload),
+  }),
   events: (params: SecurityEventQuery = {}) =>
     withDemoFallback(
       () => request<SecurityEvent[]>(`/api/security-events${buildQuery(params)}`),

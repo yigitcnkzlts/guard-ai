@@ -27,6 +27,18 @@ export interface Policy {
   updated_at: string;
 }
 
+export interface PolicyWrite {
+  name: string;
+  agent_id: string;
+  method: string;
+  path_pattern: string;
+  decision: Decision;
+  risk_level: RiskLevel;
+  description: string;
+  active: boolean;
+  priority: number;
+}
+
 export interface SecurityEvent {
   id: string;
   agent_id: string;

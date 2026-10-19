@@ -13,7 +13,7 @@ import { ProductTools } from "@/components/layout/ProductTools";
 
 const SCREEN_GUIDANCE: Record<string, { purpose: string; status: string }> = {
   "/agents": { purpose: "Gateway tarafından korunan ajanları ve durumlarını gösterir.", status: "Canlı API verisi" },
-  "/policies": { purpose: "Policy Engine tarafından uygulanan kuralları gösterir.", status: "Canlı, salt okunur API verisi" },
+  "/policies": { purpose: "Policy Engine tarafından uygulanan kuralları oluşturur ve yönetir.", status: "Canlı API verisi" },
   "/security-events": { purpose: "Gateway kararlarını arar, filtreler, inceler ve dışa aktarır.", status: "Canlı API verisi" },
   "/shadow-mode": { purpose: "Trafiği engellemeden önerilen kontrollerin etkisini gösterir.", status: "Etkileşimli demo" },
   "/investigations": { purpose: "Bir kararın kullanıcı niyetinden policy sonucuna kadar izini açıklar.", status: "Örnek olay simülasyonu" },

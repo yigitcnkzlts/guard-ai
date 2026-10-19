@@ -28,3 +28,17 @@ def get_policy(db: Session, policy_id: UUID, organization_id: UUID | None = None
     if policy is None:
         raise NotFoundError(f"Policy {policy_id} not found")
     return policy
+
+
+def create_policy(db: Session, **values: object) -> Policy:
+    policy = Policy(**values)
+    db.add(policy)
+    db.flush()
+    return policy
+
+
+def update_policy(policy: Policy, **values: object) -> Policy:
+    for field, value in values.items():
+        setattr(policy, field, value)
+    policy.version += 1
+    return policy

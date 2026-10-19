@@ -23,7 +23,7 @@ export default function PoliciesPage() {
       <header className="flex flex-wrap items-end justify-between gap-4">
         <div>
         <h1 className="text-2xl font-semibold tracking-tight">Policies</h1>
-        <p className="mt-1 text-sm text-muted">Read-only view of the current rule-based policy engine.</p>
+        <p className="mt-1 text-sm text-muted">Create and manage rules enforced by the current policy engine.</p>
         </div><Link href="/policies/new" className="flex items-center gap-2 rounded-lg bg-accent px-4 py-2 text-sm font-semibold text-[#071412]"><Plus className="h-4 w-4"/>Create policy</Link>
       </header>
       {error ? <ErrorState message={error} /> : null}

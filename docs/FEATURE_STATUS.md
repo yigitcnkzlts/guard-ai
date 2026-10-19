@@ -5,7 +5,7 @@ Bu tablo, canlı API davranışını etkileşimli demo davranışından ayırır
 | Ekran | Ne işe yarar? | Mevcut davranış |
 | --- | --- | --- |
 | AI Ajanları | Gateway tarafından korunan ajanları ve ayrıntılarını gösterir. | Canlı API verisi; demo modu açıksa API kesintisinde örnek veriye düşebilir. |
-| Politikalar | Deterministik Policy Engine kurallarını gösterir. | Canlı ve salt okunur API listesi; oluşturma/düzenleme henüz demo davranışıdır. |
+| Politikalar | Deterministik Policy Engine kurallarını oluşturur ve yönetir. | Canlı API listesi, oluşturma ve düzenleme akışı. |
 | Güvenlik Olayları | Gateway kararlarını arar, filtreler, inceler ve JSON olarak dışa aktarır. | Canlı API verisi; demo fallback desteklenir. |
 | Gölge Modu | Trafiği engellemeden olası policy etkilerini gösterir. | Tarayıcı oturumuyla sınırlı etkileşimli demo. |
 | İncelemeler | Bir kararın kullanıcı niyetinden enforcement sonucuna kadar izini gösterir. | Örnek olay ve yerel eşik simülasyonu. |
